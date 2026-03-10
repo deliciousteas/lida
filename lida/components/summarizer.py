@@ -90,6 +90,7 @@ class Summarizer():
 
         return properties_list
 
+    # enrich 有做额外的prompt engineering 功能，亦在添加description 和 semantic_type 字段
     def enrich(self, base_summary: dict, text_gen: TextGenerator,
                textgen_config: TextGenerationConfig) -> dict:
         """Enrich the data summary with descriptions"""

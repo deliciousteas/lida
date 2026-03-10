@@ -23,7 +23,9 @@ import lida.web as lida
 
 
 logger = logging.getLogger("lida")
-
+"""Manager是控制LLM沟通的class，接受参数为`TextGenerator`类，该类来自于llmx库，用于初始化AI模型。
+该类的每个方法都写在同目录下的components文件夹的不同模块，每个都用class来管理，这样降低耦合度，每个模块只要关心自己的业务功能就好。
+由于该项目为23年，只考虑了gpt3.5系列模型，现今该模型已经deprecated，也没有开放兼容openai模型的配置。"""
 
 class Manager(object):
     def __init__(self, text_gen: TextGenerator = None) -> None:
@@ -48,7 +50,10 @@ class Manager(object):
         self.data = None
         self.infographer = None
         self.persona = PersonaExplorer()
-
+    """
+    Managger实例因为支持AI模型切换，需要检测AI配置是否相同，于是有一个check_textgen函数。
+    本文没有保存每次对话的上下文记忆。
+    """
     def check_textgen(self, config: TextGenerationConfig):
         """
         Check if self.text_gen is the same as the config passed in. If not, update self.text_gen.
@@ -69,6 +74,16 @@ class Manager(object):
                 config.provider)
             self.text_gen = llm(provider=config.provider)
 
+    """
+    该方法值得注意的是对数据做summary不仅仅是对表头、数据类型、统计分布的取值。
+    在论文中，同样的数据input，具有summary环节能够显著降低代码编译错误率。
+    semantic_type 和 summary的字段是发挥AI涌现能力的地方，基于summary+enrich_sementic字段补充，可以微调AI代码编译能力。
+    参数列表：
+        data参数可选，可以是一个str的路径名，也可以是dataframe格式，Union表示对类型的选择。
+        n_samples参数指的是summary采样的数目，例如我取所有列的前三行做一个data summary。
+        summary_method:为总结方法,默认生成数据的文件和统计信息，如果是llm则会有两阶段总结，第一阶段生成数据的文件和统计信息，第二阶段基于第一阶段的总结生成一个更丰富的总结，包含semantic_type和description字段。
+        textgen_config:为生成summary的AI模型配置，例如temperature，top_p等。在openai api文档可查询。
+    """
     def summarize(
         self,
         data: Union[pd.DataFrame, str],
@@ -131,7 +146,10 @@ class Manager(object):
         return self.summarizer.summarize(
             data=self.data, text_gen=self.text_gen, file_name=file_name, n_samples=n_samples,
             summary_method=summary_method, textgen_config=textgen_config)
-
+    """
+    goals 方法认可当前模型的图表生成能力，使用prompt engineering的方式引导模型生成符合数据分析师视角的、具有洞察力的图表生成目标。
+    事实证明在2023年gpt-3系列对图表生成的能力已经有不错的能力，基于summary - goal - visualization的工作流，可以设计出很好的数据自动可视化系统。
+    """
     def goals(
         self,
         summary: Summary,
@@ -184,7 +202,10 @@ class Manager(object):
 
         return self.persona.generate(summary=summary, text_gen=self.text_gen,
                                      textgen_config=textgen_config, n=n)
-
+    """"
+    visualizat 方法会使用summary 和 goal作为输入，然后将图表生成分为generate和execute2步骤。
+    第一步：generate基于library参数生成符合相关代码；然后再编译执行。
+    """
     def visualize(
         self,
         summary,
@@ -308,7 +329,9 @@ class Manager(object):
             return_error=return_error,
         )
         return charts
-
+    """
+    将可视化code输入给llm，基于prompt engineering 解释出来。
+    """
     def explain(
         self,
         code,

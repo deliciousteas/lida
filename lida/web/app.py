@@ -17,7 +17,8 @@ textgen = llm()
 logger = logging.getLogger("lida")
 api_docs = os.environ.get("LIDA_API_DOCS", "False") == "True"
 
-
+# 代码清晰。由于summary、goal、visualization等相关功能都需要使用AI模型，因此将manager作为中央枢纽来管理AI模型的调用和相关功能的实现。
+# 所有模块都是是在一个上下文里面，例如使用同一个模型。
 lida = Manager(text_gen=textgen)
 app = FastAPI()
 # allow cross origin requests for testing on localhost:800* ports only

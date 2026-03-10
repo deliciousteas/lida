@@ -225,3 +225,48 @@ A short paper describing LIDA (Accepted at ACL 2023 Conference) is available [he
 ```
 
 LIDA builds on insights in automatic generation of visualization from an earlier paper - [Data2Vis: Automatic Generation of Data Visualizations Using Sequence to Sequence Recurrent Neural Networks](https://arxiv.org/abs/1804.03126).
+
+
+
+
+
+# 论文阅读笔记
+## 项目概述
+
+LIDA降低数据可视化门槛的工具，利用LLM的推理能力，构建了从原始数据到可视化图表的工作流。
+
+核心价值在于将图表生成任务拆解为4个由LLM驱动的顺序模块：
+
+**SUMMARIZER（数据总结）**： 将原始数据集抽象为富文本描述（包含字段语义、分布特征等），为 LLM 提供必要的上下文背景。
+
+**GOAL EXPLORER（目标制定）**： 基于数据摘要，自动生成具体的可视化目标。
+
+**VIS GENERATOR（代码生成）**： 将目标转化为可执行的代码脚本。LLM 在此环节展现了强大的逻辑编排能力。
+
+**INFOGRAPHER（风格化与美化）**： 利用生成式 AI 对图表进行艺术加工，使其具备信息图（Infographics）的视觉吸引力。
+
+> - 提供**自然语言处理模块、可见性功能来控制系统行为**，才能降低目标人群的使用门槛。
+>     
+
+**研究发现：LLM在可视化领域的几个特征：**
+
+- 声明式语法的优势：LLM容易理解
+    
+- **Summary 模块的启示**：数据概览（Summary）不仅是给用户看的，更是 Prompt Engineering 的关键。它能有效帮助 AI 建立对数据驱动型任务的“全局观”，显著提升后续生成的准确性。值得注意的是，基于summary再次进行semantic_type 和 description 的prompt，精度会略微提升。这可能是由于LLM的基础模型中，文本是热词，而数字是"长尾"，在向量空间中内在意义不显著。
+    
+
+**研究局限/未来发展：**
+
+尽管 LIDA 展示了巨大的潜力，但在实际落地中仍面临挑战：
+
+- **幻觉问题（Hallucination）**：LLM 有时会臆造数据趋势或生成错误的统计逻辑，这在严谨的数据可视化领域是致命的。
+    
+- **成本与响应延迟**：频繁调用顶级 LLM 成本高昂，且网络延迟严重影响了交互式探索的体验。
+    
+- **用户体验瓶颈**：因幻觉导致的错误修正、重复上传验证等流程极大降低了用户满意度。
+    
+
+### 🚀 未来方向：垂直领域小模型
+
+业界急需研发**规模更小、领域针对性更强**的可视化图表基础模型，适用创造性任务。
+或者，如何区分创造性任务和严谨的可视化任务呢？
