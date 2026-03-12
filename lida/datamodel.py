@@ -23,7 +23,8 @@ class CompletionResult:
     prompt: str
     suffix: str
 
-
+# 这是class decorator，为了自动生成结构，减少重复代码
+# 用于预定义初始化代码，装饰器会程序启动自动生成__init__、————repr__、__eq__等方法
 @dataclass
 class UploadUrl:
     """Response from a text generation"""

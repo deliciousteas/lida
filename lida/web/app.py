@@ -70,7 +70,7 @@ async def visualize_data(req: VisualizeWebRequest) -> dict:
         return {"status": False,
                 "message": f"Error generating visualization goals. {str(exception_error)}"}
 
-
+# 这是路由装饰器，router registration。 将url地址和函数绑定在一起，如果路由到当前网址，那么就指定该函数。
 @api.post("/visualize/edit")
 async def edit_visualization(req: VisualizeEditWebRequest) -> dict:
     """Given a visualization code, and a goal, generate a new visualization"""
